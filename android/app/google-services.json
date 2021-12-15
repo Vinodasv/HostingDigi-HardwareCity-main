@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "836637056716",
+    "project_id": "hardwarecity-d7b65",
+    "storage_bucket": "hardwarecity-d7b65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836637056716:android:ad9cf97a2c983efc106c69",
+        "android_client_info": {
+          "package_name": "com.HardwareCity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836637056716-fj39okei6m4er09toulu9geev2ur4hi8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKRAafUFO1y5mOgxOo0787d54-A_Q44Dk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836637056716-fj39okei6m4er09toulu9geev2ur4hi8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

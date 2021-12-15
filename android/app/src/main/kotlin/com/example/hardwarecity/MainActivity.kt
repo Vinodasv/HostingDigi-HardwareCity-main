@@ -1,0 +1,6 @@
+package com.HardwareCity
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
