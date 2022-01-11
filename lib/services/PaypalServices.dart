@@ -1,10 +1,11 @@
-import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert' as convert;
+
+import 'package:http/http.dart' as http;
 import 'package:http_auth/http_auth.dart';
 
 class PaypalServices {
-  //String domain = "https://api.sandbox.paypal.com/v1/"; // for sandbox mode
+  //String domain = "https://api.sandbox.paypal.com/"; // for sandbox mode
   String domain = "https://api.paypal.com"; // for production mode
 
   // for getting the access token from Paypal

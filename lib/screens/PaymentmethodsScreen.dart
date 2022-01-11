@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show Platform;
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,17 +10,21 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-// import 'package:stripe_native/stripe_native.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart' as Constants;
 import '../customicons.dart';
+// import './paymentStripe.dart';
+// import 'package:flutter_stripe_payment/flutter_stripe_payment.dart';
 import '../models/HomeScreenModels.dart';
 import '../services/firebaseStorage.dart';
 import '../states/customerProfileState.dart';
 import '../states/myCartState.dart';
 import '../styles.dart' as styles;
+import 'StripePayment.dart';
+import 'myOrders.dart';
+//import 'package:flutter_stripe_payments/payment-service.dart';
 
+//import 'package:flappy_search_bar/flappy_search_bar.dart';
 String cardNumber = '';
 String expiryDate = '';
 String cardHolderName = '';
@@ -35,6 +40,7 @@ class PaymentmethodsScreen extends StatefulWidget {
 class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
   String option = '';
   final fieldText = TextEditingController();
+  // final _stripePayment = FlutterStripePayment();
   List<Payment> stateItems = [];
   List<CartDataType> stateItems2 = [];
   List<dynamic> products = [];
@@ -84,7 +90,104 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
   String apiSignature = '';
   String _paymentMethodId = '';
   String token = "";
+  String? orderId;
 
+  //Stripe payment
+  stripePayInitOrder() async {
+    var billIndex = billPhone.indexOf(" ");
+    var shipIndex = shipPhone.indexOf(" ");
+    //Loader.show(context, progressIndicator: CupertinoActivityIndicator());
+    var body = json.encode({
+      "orderinfo": [
+        {
+          "customer_id": customerId,
+          "shippingcost": ship.toString(),
+          "subtotal": subTotal.toString(),
+          "packagingfee": package.toString(),
+          "shipmethod": delOption,
+          "tax_collected": gst.toString(),
+          "payable_amount": grandTotal!.toStringAsFixed(2),
+          "discount": discount.toString(),
+          "couponid": couponId,
+          "discounttext": discountString,
+          "paymethod": option,
+          "if_items_unavailabel": itemOption,
+          "token": token,
+          "billing": [
+            {
+              "bill_fname": billFname,
+              "bill_lname": billLname,
+              "bill_email": billEmail,
+              "bill_mobile":
+                  billPhone.substring(billIndex + 1, billPhone.length),
+              "bill_compname": company,
+              "bill_address1": billAddress1,
+              "bill_address2": billAddress2,
+              "bill_city": billcity,
+              "bill_state": billstate,
+              "bill_country": billCountry,
+              "bill_zip": billzipcode
+            }
+          ],
+          "shipping": [
+            {
+              "ship_fname": shipFname,
+              "ship_lname": shipLname,
+              "ship_email": shipEmail,
+              "ship_mobile":
+                  shipPhone.substring(shipIndex + 1, shipPhone.length),
+              "ship_address1": shippaddress1,
+              "ship_address2": shippaddress2,
+              "ship_city": shipcity,
+              "ship_state": shipstate,
+              "ship_country": shipCountry,
+              "ship_zip": shipzipcode
+            }
+          ],
+          "products": products
+        }
+      ]
+    });
+    print(body);
+
+    final result = await http.post(
+      Uri.parse(Constants.App_url + Constants.orderCreate),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    );
+    log("${Constants.App_url + Constants.orderCreate}");
+    // print(result);
+    //print("this is result ...................$result");
+    final response = json.decode(result.body);
+    log("$result");
+    //log(response);
+    if (response != null && response["response"] == "success") {
+      final CartState cartItems =
+          Provider.of<CartState>(context, listen: false);
+      var cartList = cartItems.cart;
+      cartList = [];
+      cartItems.saveCart(cartList);
+      cartModify(0, customerId.toString(), customerName);
+      Fluttertoast.showToast(
+        msg: response["message"],
+        toastLength: Toast.LENGTH_SHORT,
+        webBgColor: "#e74c3c",
+        timeInSecForIosWeb: 5,
+      );
+      int _orderId = response["orderid"];
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => StripePayment(
+                  customerId: customerId.toString(),
+                  orderId: _orderId.toString(),
+                  cartAmmount: grandTotal.toString())));
+    }
+  }
+
+  //Order creation API
   orderCreation() async {
     var billIndex = billPhone.indexOf(" ");
     var shipIndex = shipPhone.indexOf(" ");
@@ -140,7 +243,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         }
       ]
     });
-    print(body);
+    log(body);
 
     var result = await http.post(
       Uri.parse(Constants.App_url + Constants.orderCreate),
@@ -149,7 +252,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
       },
       body: body,
     );
-    print(result);
+    log("result");
     Map<String, dynamic> response = json.decode(result.body);
     print(response);
     if (response["response"] == "success") {
@@ -165,11 +268,12 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         webBgColor: "#e74c3c",
         timeInSecForIosWeb: 5,
       );
-      if (option == "Hoolah") {
-        await canLaunch(response["hoolahpaymenturl"])
-            ? await launch(response["hoolahpaymenturl"])
-            : throw 'Could not launch';
-      } else if (option == "Paypal") {
+      // if (option == "Hoolah") {
+      //   await canLaunch(response["hoolahpaymenturl"])
+      //       ? await launch(response["hoolahpaymenturl"])
+      //       : throw 'Could not launch';
+      // }
+      if (option == "Paypal") {
         Loader.hide();
         print(option + " : paypal");
         Navigator.pushNamed(context, '/paypal', arguments: {
@@ -179,33 +283,67 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         }).then((value) async {
           var transactionId = value;
           var orderId = response["orderid"];
-          if (value == "null") {
-            Fluttertoast.showToast(
-              msg: "Your order not completed",
-              toastLength: Toast.LENGTH_SHORT,
-              webBgColor: "#e74c3c",
-              timeInSecForIosWeb: 5,
-            );
-          } else {
-            var result2 = await http.post(
-              Uri.parse(Constants.App_url +
-                  Constants.payapalSuccess +
-                  "?orderid=$orderId&transactionid=$transactionId"),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            );
-            print(result);
-            Map<String, dynamic> response2 = json.decode(result2.body);
-            print(response);
-            if (response2["response"] == "success") {
-              Fluttertoast.showToast(
-                msg: response2["message"],
-                toastLength: Toast.LENGTH_SHORT,
-                webBgColor: "#e74c3c",
-                timeInSecForIosWeb: 5,
-              );
+          if (value == "nil") {
+            final httpresponse = await http.post(Uri.parse(
+                "https://hardwarecity.com.sg/cancelorder?orderid=${orderId}"));
+            // paymentIntentData = null;
+            //log("$httpresponse");
+            final failedresponse = json.decode(httpresponse.body);
+            if (failedresponse != null) {
+              print("------------------------------------------------");
+              print("failed response is :$failedresponse");
+              print("${failedresponse["messgage"]}");
             }
+            //https://hardwarecity.com.sg/cancelorder?orderid=15505
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Payment Canceled.")));
+            setState(() {
+              //  onPayemntFailed = true;
+            });
+            Future.delayed(const Duration(seconds: 3), () {
+              //  Navigator.of(context).pop();
+            });
+            // Fluttertoast.showToast(
+            //   msg: "Your order not completed",
+            //   toastLength: Toast.LENGTH_SHORT,
+            //   webBgColor: "#e74c3c",
+            //   timeInSecForIosWeb: 5,
+            // );
+          } else {
+            final response = http.post(Uri.parse(
+                "https://www.hardwarecity.com.sg/successorder?orderid=${orderId}&transactionid="));
+            print(response);
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("paid successfully")));
+            Future.delayed(const Duration(seconds: 3), () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyOrdersScreen()),
+                  (route) => false);
+              // payment done navigation goes here
+              // Navigator.push(context,
+              //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+            });
+
+            // var result2 = await http.post(
+            //   Uri.parse(Constants.App_url +
+            //       Constants.payapalSuccess +
+            //       "?orderid=$orderId&transactionid=$transactionId"),
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            // );
+            // print(result);
+            // Map<String, dynamic> response2 = json.decode(result2.body);
+            // print(response);
+            // if (response2["response"] == "success") {
+            //   Fluttertoast.showToast(
+            //     msg: response2["message"],
+            //     toastLength: Toast.LENGTH_SHORT,
+            //     webBgColor: "#e74c3c",
+            //     timeInSecForIosWeb: 5,
+            //   );
+            // }
           }
           Navigator.pushNamed(context, '/bottomTab');
         });
@@ -223,18 +361,24 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     Navigator.pushNamed(context, '/bottomTab');
   }
 
-  _makeNativePay() async {
-    // StripeNative.setCurrencyKey("SGD");
-    // StripeNative.setCountryKey("SG");
-    // var order = Order(grandTotal, 0, 0.0, "HardwareCity");
-    // var temptoken = await StripeNative.useNativePay(order);
-    // setState(() {
-    //   token = temptoken;
-    // });
-    // orderCreation();
-    // StripeNative.confirmPayment(true);
-  }
+  // _makeNativePay() async {
+  //   // double subtotal = double.parse(subTotal.toStringAsFixed(2)) +
+  //   //     double.parse(package.toStringAsFixed(2)) +
+  //   //     double.parse(ship.toStringAsFixed(2));
+  //   StripeNative.setCurrencyKey("SGD");
+  //   StripeNative.setCountryKey("SG");
+  //   //subtotal, tax, tip, merchant name
+  //   var order = Order(grandTotal, 0, 0.0, "HardwareCity");
+  //   var temptoken = await StripeNative.useNativePay(order);
+  //   //var wasCharged = await AppAPI.charge(temptoken, subtotal + gst);
+  //   setState(() {
+  //     token = temptoken;
+  //   });
+  //   orderCreation();
+  //   StripeNative.confirmPayment(true);
+  // }
 
+  //Package calculatiom API response
   packagefeecalc() async {
     setState(() {
       isLoading = true;
@@ -273,20 +417,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     }
   }
 
-  // payViaNewCard(BuildContext context) async {
-  //   ProgressDialog dialog = new ProgressDialog(context);
-  //   dialog.style(message: 'Please wait...');
-  //   await dialog.show();
-  //   var response =
-  //       await StripeService.payWithNewCard(amount: '15000', currency: 'USD');
-  //   await dialog.hide();
-  //   Scaffold.of(context).showSnackBar(SnackBar(
-  //     content: Text(response.message),
-  //     duration:
-  //         new Duration(milliseconds: response.success == true ? 1200 : 3000),
-  //   ));
-  // }
-
+  //
   getItems() async {
     try {
       print("called2");
@@ -413,34 +544,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     Loader.hide();
   }
 
-  // startStripePayment() async {
-  //   _stripePayment.setStripeSettings(apiKey, "");
-  //   _stripePayment.onCancel = () {
-  //     print("the payment form was cancelled");
-  //   };
-  //   var paymentResponse = await _stripePayment.addPaymentMethod();
-  //   print(paymentResponse);
-  //   var intentResponse = await _stripePayment.confirmPaymentIntent(
-  //       "sk_test_51I0j6aI8odHWiFEGWU96F8Lu3fn7ACR1R78frW3gQUjSzOVnadwaqQhPMdZW1ejAXnzk5OOWXBlSIEt55Kpk1Agt00B4K2jQ6Z",
-  //       paymentResponse.paymentMethodId,
-  //       grandTotal);
-  //   if (PaymentResponseStatus.failed == intentResponse.status) {
-  //     Fluttertoast.showToast(
-  //         msg: intentResponse.errorMessage,
-  //         toastLength: Toast.LENGTH_LONG,
-  //         gravity: ToastGravity.BOTTOM,
-  //         timeInSecForIosWeb: 10,
-  //         backgroundColor: Colors.red,
-  //         textColor: Colors.white,
-  //         fontSize: 16.0);
-  //   } else {
-  //     setState(() {
-  //       _paymentMethodId = intentResponse.paymentIntentId;
-  //       isLoading = false;
-  //     });
-  //     print("payment end");
-  //   }
-  // }
+  //Payment method API respond
 
   getPaymentMethods() async {
     setState(() {
@@ -460,7 +564,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     print(response);
     if (response["response"] == "success") {
       for (var u in response["paymentmenthods"]) {
-        Payment data = Payment(u["id"], u["name"], u["mode"], u["testing_url"],
+        Payment data = Payment(u["name"], u["mode"], u["testing_url"],
             u["live_url"], u["api_key"], u["api_signature"], u["obj"]);
         itemsTemp.add(data);
       }
@@ -472,60 +576,51 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     });
   }
 
-  payViaNewCard(BuildContext context) async {
-    // ProgressDialog pd = ProgressDialog(context: context);
-    //
-    // /// Set options
-    // /// Max and msg required
-    // pd.show(
-    //   max: 100,
-    //   msg: 'Please wait...',
-    //   progressBgColor: Colors.transparent,
-    // );
-    // ProgressDialog dialog = new ProgressDialog(context);
-    // dialog.style(message: 'Please wait...');
-    // await dialog.show();
+  // payViaNewCard(BuildContext context) async {
+  //   // ProgressDialog dialog = new ProgressDialog(context);
+  //   // dialog.style(message: 'Please wait...');
+  //   // await dialog.show();
+  //
+  //   var response = await StripeService.payWithNewCard(
+  //       amount: grandTotal.toString(), currency: 'SGD', sk: apiSignature);
+  //   // await dialog.hide();
+  //   if (response.success!) {
+  //     setState(() {
+  //       _paymentMethodId = response.paymentIntentId!;
+  //       isLoading = false;
+  //     });
+  //     Fluttertoast.showToast(
+  //         msg: response.message!,
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         timeInSecForIosWeb: 10,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0);
+  //
+  //     print("payment end");
+  //     this.orderCreation();
+  //   } else {
+  //     Fluttertoast.showToast(
+  //         msg: response.message!,
+  //         toastLength: Toast.LENGTH_LONG,
+  //         gravity: ToastGravity.BOTTOM,
+  //         timeInSecForIosWeb: 10,
+  //         backgroundColor: Colors.red,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0);
+  //   }
+  // }
 
-    // var response = await StripeService.payWithNewCard(
-    //     amount: grandTotal.toString(), currency: 'SGD', sk: apiSignature);
-    // await dialog.hide();
-    // if (response.success!) {
-    //   setState(() {
-    //     _paymentMethodId = response.paymentIntentId!;
-    //     isLoading = false;
-    //   });
-    //   Fluttertoast.showToast(
-    //       msg: response.message!,
-    //       toastLength: Toast.LENGTH_LONG,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 10,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    //
-    //   print("payment end");
-    //   this.orderCreation();
-    // } else {
-    //   Fluttertoast.showToast(
-    //       msg: response.message!,
-    //       toastLength: Toast.LENGTH_LONG,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 10,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // }
-  }
-
-  nativeStripeInit() {
-    // StripeNative.setPublishableKey(apiKey);
-    // if (Platform.isIOS) {
-    //   StripeNative.setMerchantIdentifier("merchant.hardwarecity.hardwarecity");
-    // }
-    // else {
-    //   StripeNative.setMerchantIdentifier("BCR2DN6T27QIBV2T");
-    // }
-  }
+  // nativeStripeInit() {
+  //   StripeNative.setPublishableKey(apiKey);
+  //   if (Platform.isIOS) {
+  //     StripeNative.setMerchantIdentifier("merchant.hardwarecity.hardwarecity");
+  //   }
+  //   // else {
+  //   //   StripeNative.setMerchantIdentifier("BCR2DN6T27QIBV2T");
+  //   // }
+  // }
 
   @override
   void initState() {
@@ -569,7 +664,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         });
       }
     });
-
+    //print()
     this.getItems();
     this.getPaymentMethods();
   }
@@ -623,6 +718,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                 style: styles.ThemeText.editProfileText),
                           ],
                         ),
+                        // if (isShow)
                         Container(
                           color: Color(Constants.bggrey),
                           margin: EdgeInsets.only(top: 20, bottom: 20),
@@ -991,7 +1087,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                           style: styles.ThemeText.editProfileText,
                         ),
                         for (int i = 0; i < stateItems.length; i++)
-                          if (i != 1)
+                          if (i != 2 && i != 0)
                             RadioListTile(
                               groupValue: option,
                               title: Text(stateItems[i].name,
@@ -1007,9 +1103,9 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                             ),
                         RadioListTile(
                           groupValue: option,
-                          title: Text(native,
+                          title: Text("Credit & Debit Card",
                               style: styles.ThemeText.editProfileText2),
-                          value: "Native Pay",
+                          value: "Stripe Pay",
                           onChanged: (val) {
                             setState(() {
                               option = val.toString();
@@ -1018,6 +1114,22 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                             });
                           },
                         ),
+
+                        //NATIVE PAYMENT RADIO BUTTON
+                        // RadioListTile(
+                        //   groupValue: option,
+                        //   title: Text(native,
+                        //       style: styles.ThemeText.editProfileText2),
+                        //   value: "Native Pay",
+                        //   onChanged: (val) {
+                        //     setState(() {
+                        //       option = val.toString();
+                        //       apiKey = stateItems[1].apiKey;
+                        //       apiSignature = stateItems[1].apiSignature;
+                        //     });
+                        //   },
+                        // ),
+
                         Container(
                           margin: EdgeInsets.only(bottom: 10),
                           width: pageWidth,
@@ -1028,17 +1140,19 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                             onPressed: () {
                               try {
                                 if (option != null) {
-                                  if (option == "Native Pay") {
-                                    nativeStripeInit();
-                                    _makeNativePay();
-                                  } else if (option == "atome") {
-                                    orderCreation();
-                                  } else if (option == "Paypal") {
+                                  if (option == "Stripe Pay") {
+                                    stripePayInitOrder();
+                                  }
+                                  if (option == "Paypal") {
                                     orderCreation();
                                   }
-                                  // else {
-                                  //   StripeService.init(apiKey);
-                                  //   this.payViaNewCard(context);
+                                  // //TODO NATIVE PAYMENT
+                                  // if (option == "Native Pay") {
+                                  //   Fluttertoast.showToast(
+                                  //       msg:    "Exceptional Error Please Log",
+                                  //       toastLength: Toast.LENGTH_SHORT,
+                                  //       webBgColor: "#e74c3c",
+                                  //       timeInSecForIosWeb: 5);
                                   // }
                                 } else {
                                   Fluttertoast.showToast(
@@ -1076,7 +1190,6 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
 }
 
 class Payment {
-  final String id;
   final String name;
   final String mode;
   final String testingUrl;
@@ -1086,7 +1199,7 @@ class Payment {
   final Object obj;
 
   Payment(this.name, this.mode, this.testingUrl, this.liveUrl, this.apiKey,
-      this.apiSignature, this.obj, this.id);
+      this.apiSignature, this.obj);
 }
 
 class OrderProducts {

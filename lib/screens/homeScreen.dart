@@ -1739,11 +1739,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return ItemTile1(
                                       qty: snapshot.data[index].qty,
+                                      //1,
+                                      // snapshot.data[index].qty == 0 ||
+                                      //         snapshot.data[index].qty == null
+                                      //     ? 1
+                                      //     : snapshot.data[index].qty,
                                       inCart: snapshot.data[index].inCart,
                                       imagePath: snapshot.data[index].imgPath,
                                       itemName: snapshot.data[index].itemName,
                                       optionscount:
                                           snapshot.data[index].optionscount,
+                                      //"0",
+                                      // snapshot.data[index]
+                                      //                 .optionscount ==
+                                      //             0 ||
+                                      //         snapshot.data[index]
+                                      //                 .optionscount ==
+                                      //             null
+                                      //     ? 0
+                                      //     : snapshot.data[index].optionscount,
                                       gstprice:
                                           snapshot.data[index].price.toString(),
                                       gststandardprice: snapshot

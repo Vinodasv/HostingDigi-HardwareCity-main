@@ -2,6 +2,7 @@ import 'package:HardwareCity/screens/PaypalPayment.dart';
 import 'package:HardwareCity/screens/singleproductDetails.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,6 +46,10 @@ class Cart {
 var intialRoute = '/login';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_live_51HtTNND7fZJmBBvnXgAZiJZQpHh8IvgMveQLutC8QMUDkq2oWM7jchwI8mq9euHpNS8Pxy84mmXNQnpVDlfKX89a003RSLFVW0";
+  //"pk_test_51H41xgIstCqISsuzDCVdYLdrOssHxvohWyvyDALu1EdLg6cHPX3JhtYHaCM4GIAVbTdQG64nMxw5GRxNi0XAHUkE00FlUB3efm";
+  await Stripe.instance.applySettings();
   await Firebase.initializeApp();
   PushNotificationService _pushNotificationService =
       new PushNotificationService();

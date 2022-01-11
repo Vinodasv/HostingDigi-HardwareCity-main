@@ -181,31 +181,6 @@ class ItemTile1 extends StatelessWidget {
                           ),
                       ],
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   mainAxisSize: MainAxisSize.max,
-                    //   children: [
-                    //     Container(
-                    //       child: Text(
-                    //         "\$" + double.parse(gstprice!).toStringAsFixed(2),
-                    //         style: styles.ThemeText.priceBold,
-                    //         textAlign: TextAlign.left,
-                    //       ),
-                    //     ),
-                    //     if (gstprice != gststandardprice)
-                    //       Container(
-                    //         // margin: EdgeInsets.only(left: 20),
-                    //         alignment: Alignment.centerLeft,
-                    //         child: Text(
-                    //           "\$" +
-                    //               double.parse(gststandardprice!)
-                    //                   .toStringAsFixed(2),
-                    //           style: styles.ThemeText.priceBoldStrikethrough,
-                    //           textAlign: TextAlign.left,
-                    //         ),
-                    //       ),
-                    //   ],
-                    // ),
                     if (optionscount == "0" && qty != 0)
                       Container(
                         width: pageWidth,
@@ -256,7 +231,10 @@ class ItemTile1 extends StatelessWidget {
                         ),
                       ),
                     qty! > 0
+
+                        ///demo india
                         ? optionscount == "0"
+                            // optionscount != null
                             ? Container(
                                 width: pageWidth,
                                 height: 36,

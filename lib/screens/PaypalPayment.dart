@@ -1,7 +1,7 @@
 import 'dart:core';
+
 import 'package:HardwareCity/services/PaypalServices.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'PaymentmethodsScreen.dart';
@@ -31,7 +31,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
   String returnURL = 'return.example.com';
   String cancelURL = 'cancel.example.com';
-  String apiKey = '';
+  String apiKey = "";
   String secret = "";
   String total = "";
   @override
