@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Map<String, dynamic> response2 = json.decode(result2.body);
 
       Map<String, dynamic> response = json.decode(result.body);
-      // print("promoItems2");
+      print("promoItems2"+response.toString()+response2.toString());
 
       if (response["response"] == "success") {
         // print('saved $value');
@@ -1738,8 +1738,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (BuildContext context, int index) {
                                   return ItemTile1(
-                                      qty: snapshot.data[index].qty,
-                                      //1,
+                                      //qty: snapshot.data[index].qty,
+                                      qty: 1,
                                       // snapshot.data[index].qty == 0 ||
                                       //         snapshot.data[index].qty == null
                                       //     ? 1
@@ -1747,9 +1747,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       inCart: snapshot.data[index].inCart,
                                       imagePath: snapshot.data[index].imgPath,
                                       itemName: snapshot.data[index].itemName,
-                                      optionscount:
-                                          snapshot.data[index].optionscount,
-                                      //"0",
+                                      // optionscount:
+                                      //     snapshot.data[index].optionscount,
+                                      optionscount: "0",
                                       // snapshot.data[index]
                                       //                 .optionscount ==
                                       //             0 ||
@@ -1795,8 +1795,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         }
                                       },
                                       funAddToCart: () {
-                                        if (snapshot.data[index].optionscount
-                                                .toString() ==
+                                        print("count "+snapshot.data[index].count.toString());
+
+                                        if (snapshot.data[index].count
+                                                .toString() !=
                                             "0") {
                                           if (!iscartLoading) {
                                             addtoCart(

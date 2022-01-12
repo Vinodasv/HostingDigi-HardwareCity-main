@@ -231,8 +231,7 @@ class ItemTile1 extends StatelessWidget {
                         ),
                       ),
                     qty! > 0
-
-                        ///demo india
+                        //demo india
                         ? optionscount == "0"
                             // optionscount != null
                             ? Container(

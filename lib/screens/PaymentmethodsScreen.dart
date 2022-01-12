@@ -9,6 +9,7 @@ import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:pay/pay.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart' as Constants;
@@ -40,6 +41,13 @@ class PaymentmethodsScreen extends StatefulWidget {
 class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
   String option = '';
   final fieldText = TextEditingController();
+   var _paymentItems = [
+    PaymentItem(
+      label: 'Total',
+      amount: '99.99',
+      status: PaymentItemStatus.final_price,
+    )
+  ];
   // final _stripePayment = FlutterStripePayment();
   List<Payment> stateItems = [];
   List<CartDataType> stateItems2 = [];
@@ -669,6 +677,16 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     this.getPaymentMethods();
   }
 
+
+
+
+  void onApplePayResult(paymentResult) {
+    // Send the resulting Apple Pay token to your server / PSP
+  }
+
+  void onGooglePayResult(paymentResult) {
+    // Send the resulting Google Pay token to your server / PSP
+  }
   @override
   Widget build(BuildContext context) {
     String native = "Google Pay";
@@ -1115,7 +1133,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                           },
                         ),
 
-                        //NATIVE PAYMENT RADIO BUTTON
+                        // NATIVE PAYMENT RADIO BUTTON
                         // RadioListTile(
                         //   groupValue: option,
                         //   title: Text(native,
@@ -1129,9 +1147,36 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                         //     });
                         //   },
                         // ),
+    Platform.isIOS ?
+    ApplePayButton(
+    paymentConfigurationAsset: 'json/apple_pay.json',
+    paymentItems: _paymentItems,
+    style: ApplePayButtonStyle.black,
+    type: ApplePayButtonType.buy,
+    margin: const EdgeInsets.only(top: 15.0),
+    onPaymentResult: onApplePayResult,
+    loadingIndicator: const Center(
+    child: CircularProgressIndicator(),
+    ),
+    ):
+    Center(
+      child: GooglePayButton(
+      paymentConfigurationAsset: 'json/google_pay.json',
+      paymentItems: _paymentItems,
+      style: GooglePayButtonStyle.white,
+      type: GooglePayButtonType.pay,
+      width: 200,
+      height:50,
+      margin: const EdgeInsets.only(top: 15.0),
+      onPaymentResult: onGooglePayResult,
+      loadingIndicator: const Center(
+      child: CircularProgressIndicator(),
+      ),
+      ),
+    ),
 
                         Container(
-                          margin: EdgeInsets.only(bottom: 10),
+                          margin: EdgeInsets.only(bottom: 10,top: 20),
                           width: pageWidth,
                           height: 50,
                           child: RaisedButton(
@@ -1147,13 +1192,9 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                     orderCreation();
                                   }
                                   // //TODO NATIVE PAYMENT
-                                  // if (option == "Native Pay") {
-                                  //   Fluttertoast.showToast(
-                                  //       msg:    "Exceptional Error Please Log",
-                                  //       toastLength: Toast.LENGTH_SHORT,
-                                  //       webBgColor: "#e74c3c",
-                                  //       timeInSecForIosWeb: 5);
-                                  // }
+                                  if (option == "Native Pay") {
+
+                                  }
                                 } else {
                                   Fluttertoast.showToast(
                                     msg: "Please choose any payment option",
