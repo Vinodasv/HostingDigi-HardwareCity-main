@@ -195,11 +195,14 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     }
   }
 
+
+  String _orderid="";
   //Order creation API
   orderCreation() async {
     var billIndex = billPhone.indexOf(" ");
     var shipIndex = shipPhone.indexOf(" ");
     Loader.show(context, progressIndicator: CupertinoActivityIndicator());
+
     var body = json.encode({
       "orderinfo": [
         {
@@ -357,6 +360,84 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         });
         return;
       }
+    }else if(option=="Native Pay"){
+      Loader.hide();
+      print(option + " : Native");
+      // Navigator.pushNamed(context, '/paypal', arguments: {
+      //   'apiKey': apiKey,
+      //   'secret': apiSignature,
+      //   'total': grandTotal
+      // }).then((value) async {
+      //   var transactionId = value;
+        var orderId = response["orderid"];
+
+      _orderid=response["orderid"];
+      //   if (nativepay_error) {
+      //     final httpresponse = await http.post(Uri.parse(
+      //         "https://hardwarecity.com.sg/cancelorder?orderid=${orderId}"));
+      //     // paymentIntentData = null;
+      //     //log("$httpresponse");
+      //     final failedresponse = json.decode(httpresponse.body);
+      //     if (failedresponse != null) {
+      //       print("------------------------------------------------");
+      //       print("failed response is :$failedresponse");
+      //       print("${failedresponse["messgage"]}");
+      //     }
+      //     //https://hardwarecity.com.sg/cancelorder?orderid=15505
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //         const SnackBar(content: Text("Payment Canceled.")));
+      //     setState(() {
+      //       //  onPayemntFailed = true;
+      //     });
+      //     Future.delayed(const Duration(seconds: 3), () {
+      //       //  Navigator.of(context).pop();
+      //     });
+      //     // Fluttertoast.showToast(
+      //     //   msg: "Your order not completed",
+      //     //   toastLength: Toast.LENGTH_SHORT,
+      //     //   webBgColor: "#e74c3c",
+      //     //   timeInSecForIosWeb: 5,
+      //     // );
+      //   }
+      //   else {
+      //     final response = http.post(Uri.parse(
+      //         "https://www.hardwarecity.com.sg/successorder?orderid=${orderId}&transactionid="));
+      //     print(response);
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //         const SnackBar(content: Text("paid successfully")));
+      //     Future.delayed(const Duration(seconds: 3), () {
+      //       Navigator.pushAndRemoveUntil(
+      //           context,
+      //           MaterialPageRoute(builder: (context) => MyOrdersScreen()),
+      //               (route) => false);
+      //       // payment done navigation goes here
+      //       // Navigator.push(context,
+      //       //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+      //     });
+      //
+      //     // var result2 = await http.post(
+      //     //   Uri.parse(Constants.App_url +
+      //     //       Constants.payapalSuccess +
+      //     //       "?orderid=$orderId&transactionid=$transactionId"),
+      //     //   headers: {
+      //     //     "Content-Type": "application/json",
+      //     //   },
+      //     // );
+      //     // print(result);
+      //     // Map<String, dynamic> response2 = json.decode(result2.body);
+      //     // print(response);
+      //     // if (response2["response"] == "success") {
+      //     //   Fluttertoast.showToast(
+      //     //     msg: response2["message"],
+      //     //     toastLength: Toast.LENGTH_SHORT,
+      //     //     webBgColor: "#e74c3c",
+      //     //     timeInSecForIosWeb: 5,
+      //     //   );
+      //     // }
+      //   }
+      //   Navigator.pushNamed(context, '/bottomTab');
+      // // });
+      // return;
     } else {
       Fluttertoast.showToast(
         msg: response["message"],
@@ -367,6 +448,78 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     }
     Loader.hide();
     Navigator.pushNamed(context, '/bottomTab');
+  }
+
+
+  createOrderNative(String orderid)async{
+    var orderId = orderid;
+    if (nativepay_error) {
+      final httpresponse = await http.post(Uri.parse(
+          "https://hardwarecity.com.sg/cancelorder?orderid=${orderId}"));
+      // paymentIntentData = null;
+      //log("$httpresponse");
+      final failedresponse = json.decode(httpresponse.body);
+      if (failedresponse != null) {
+        print("------------------------------------------------");
+        print("failed response is :$failedresponse");
+        print("${failedresponse["messgage"]}");
+      }
+      //https://hardwarecity.com.sg/cancelorder?orderid=15505
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Payment Canceled.")));
+      setState(() {
+        //  onPayemntFailed = true;
+      });
+      Future.delayed(const Duration(seconds: 3), () {
+        //  Navigator.of(context).pop();
+      });
+      // Fluttertoast.showToast(
+      //   msg: "Your order not completed",
+      //   toastLength: Toast.LENGTH_SHORT,
+      //   webBgColor: "#e74c3c",
+      //   timeInSecForIosWeb: 5,
+      // );
+    }
+    else {
+      final response = http.post(Uri.parse(
+          "https://www.hardwarecity.com.sg/successorder?orderid=${orderId}&transactionid="));
+      print(response);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("paid successfully")));
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MyOrdersScreen()),
+                (route) => false);
+        // payment done navigation goes here
+        // Navigator.push(context,
+        //     MaterialPageRoute(builder: (context) => const HomeScreen()));
+      });
+
+      // var result2 = await http.post(
+      //   Uri.parse(Constants.App_url +
+      //       Constants.payapalSuccess +
+      //       "?orderid=$orderId&transactionid=$transactionId"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // );
+      // print(result);
+      // Map<String, dynamic> response2 = json.decode(result2.body);
+      // print(response);
+      // if (response2["response"] == "success") {
+      //   Fluttertoast.showToast(
+      //     msg: response2["message"],
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     webBgColor: "#e74c3c",
+      //     timeInSecForIosWeb: 5,
+      //   );
+      // }
+    }
+    Loader.hide();
+    Navigator.pushNamed(context, '/bottomTab');
+    // });
+    return;
   }
 
   // _makeNativePay() async {
@@ -424,6 +577,8 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
       });
     }
   }
+
+  late bool nativepay_error;
 
   //
   getItems() async {
@@ -557,6 +712,13 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
   getPaymentMethods() async {
     setState(() {
       isLoading = true;
+      _paymentItems = [
+        PaymentItem(
+          label: 'Total',
+          amount: grandTotal!.toStringAsFixed(2),
+          status: PaymentItemStatus.final_price,
+        )
+      ];
     });
     print(Constants.paymentMethods);
     List<Payment> itemsTemp = [];
@@ -672,6 +834,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         });
       }
     });
+
     //print()
     this.getItems();
     this.getPaymentMethods();
@@ -681,10 +844,30 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
 
 
   void onApplePayResult(paymentResult) {
+    nativepay_error=false;
+    createOrderNative(_orderid);
+
+    // Send the resulting Apple Pay token to your server / PSP
+  }
+  void onApplePayErrorResult(paymentResult) {
+    nativepay_error=true;
+    createOrderNative(_orderid);
+
     // Send the resulting Apple Pay token to your server / PSP
   }
 
   void onGooglePayResult(paymentResult) {
+print("result"+paymentResult.toString());
+nativepay_error=false;
+createOrderNative(_orderid);
+
+    // Send the resulting Google Pay token to your server / PSP
+  }
+  void onGooglePayErrorResult(paymentResult) {
+    print("result"+paymentResult.toString());
+    nativepay_error=true;
+    createOrderNative(_orderid);
+
     // Send the resulting Google Pay token to your server / PSP
   }
   @override
@@ -1155,6 +1338,11 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     type: ApplePayButtonType.buy,
     margin: const EdgeInsets.only(top: 15.0),
     onPaymentResult: onApplePayResult,
+    onError: onApplePayErrorResult,
+    onPressed: (){
+      option == "Native Pay";
+      orderCreation();
+    },
     loadingIndicator: const Center(
     child: CircularProgressIndicator(),
     ),
@@ -1169,6 +1357,11 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
       height:50,
       margin: const EdgeInsets.only(top: 15.0),
       onPaymentResult: onGooglePayResult,
+      onError: onGooglePayErrorResult,
+      onPressed: (){
+        option == "Native Pay";
+        orderCreation();
+      },
       loadingIndicator: const Center(
       child: CircularProgressIndicator(),
       ),
@@ -1228,6 +1421,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                 ),
               ));
   }
+
 }
 
 class Payment {
