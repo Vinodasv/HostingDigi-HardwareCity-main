@@ -473,12 +473,12 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
       Future.delayed(const Duration(seconds: 3), () {
         //  Navigator.of(context).pop();
       });
-      // Fluttertoast.showToast(
-      //   msg: "Your order not completed",
-      //   toastLength: Toast.LENGTH_SHORT,
-      //   webBgColor: "#e74c3c",
-      //   timeInSecForIosWeb: 5,
-      // );
+      Fluttertoast.showToast(
+        msg: "Your order not completed",
+        toastLength: Toast.LENGTH_SHORT,
+        webBgColor: "#e74c3c",
+        timeInSecForIosWeb: 5,
+      );
     }
     else {
       final response = http.post(Uri.parse(
@@ -715,7 +715,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
       _paymentItems = [
         PaymentItem(
           label: 'Total',
-          amount: grandTotal!.toStringAsFixed(2),
+          amount: "99",
           status: PaymentItemStatus.final_price,
         )
       ];
@@ -1331,21 +1331,23 @@ createOrderNative(_orderid);
                         //   },
                         // ),
     Platform.isIOS ?
-    ApplePayButton(
-    paymentConfigurationAsset: 'json/apple_pay.json',
-    paymentItems: _paymentItems,
-    style: ApplePayButtonStyle.black,
-    type: ApplePayButtonType.buy,
-    margin: const EdgeInsets.only(top: 15.0),
-    onPaymentResult: onApplePayResult,
-    onError: onApplePayErrorResult,
-    onPressed: (){
-      option == "Native Pay";
-      orderCreation();
-    },
-    loadingIndicator: const Center(
-    child: CircularProgressIndicator(),
-    ),
+    Center(
+      child: ApplePayButton(
+      paymentConfigurationAsset: 'json/apple_pay.json',
+      paymentItems: _paymentItems,
+      style: ApplePayButtonStyle.black,
+      type: ApplePayButtonType.buy,
+      margin: const EdgeInsets.only(top: 15.0),
+      onPaymentResult: onApplePayResult,
+      onError: onApplePayErrorResult,
+      onPressed: (){
+        option == "Native Pay";
+        orderCreation();
+      },
+      loadingIndicator: const Center(
+      child: CircularProgressIndicator(),
+      ),
+      ),
     ):
     Center(
       child: GooglePayButton(
