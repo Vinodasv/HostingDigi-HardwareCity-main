@@ -2,7 +2,7 @@
   "provider": "apple_pay",
   "data": {
     "merchantIdentifier": "N63T93SQAS.merchant.com.hardwarecity.hardwarecity",
-    "displayName": "<Display Name>",
+    "displayName": "HardwareCity",
     "merchantCapabilities": [
       "3DS",
       "debit",

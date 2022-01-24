@@ -1287,34 +1287,85 @@ createOrderNative(_orderid);
                           "Choose a payment method : ",
                           style: styles.ThemeText.editProfileText,
                         ),
+                        SizedBox(height: 10,),
+
                         for (int i = 0; i < stateItems.length; i++)
                           if (i != 2 && i != 0)
-                            RadioListTile(
-                              groupValue: option,
-                              title: Text(stateItems[i].name,
-                                  style: styles.ThemeText.editProfileText2),
-                              value: stateItems[i].name,
-                              onChanged: (val) {
-                                setState(() {
-                                  option = val.toString();
-                                  apiKey = stateItems[i].apiKey;
-                                  apiSignature = stateItems[i].apiSignature;
-                                });
+                            Center(
+                              child: SizedBox(
+                              width: 200,
+                              height: 50,
+                               child: RaisedButton(
+                              color: Colors.white,
+
+
+                              onPressed: () {
+                              setState(() {
+                               option = stateItems[i].name;
+                               apiKey = stateItems[i].apiKey;
+                               apiSignature = stateItems[i].apiSignature;
+                       });
+                              _payment();
                               },
-                            ),
-                        RadioListTile(
-                          groupValue: option,
-                          title: Text("Credit & Debit Card",
-                              style: styles.ThemeText.editProfileText2),
-                          value: "Stripe Pay",
-                          onChanged: (val) {
-                            setState(() {
-                              option = val.toString();
-                              apiKey = stateItems[1].apiKey;
-                              apiSignature = stateItems[1].apiSignature;
-                            });
-                          },
+                              child:Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                              Text("${stateItems[i].name} "),Image.asset("assets/images/logo_paypal.png",height: 20,)],) ,
+
+
+                          ),
                         ),
+                            ),
+
+                        // RadioListTile(
+                        //   groupValue: option,
+                        //   title: Text(stateItems[i].name,
+                        //       style: styles.ThemeText.editProfileText2),
+                        //   value: stateItems[i].name,
+                        //   onChanged: (val) {
+                        //     setState(() {
+                        //       option = val.toString();
+                        //       apiKey = stateItems[i].apiKey;
+                        //       apiSignature = stateItems[i].apiSignature;
+                        //     });
+                        //   },
+                        // ),
+                        SizedBox(height: 10,),
+
+                        Center(
+                          child: SizedBox(
+                            width: 200,
+                            height: 50,
+                            child: RaisedButton(
+                              color: Colors.white,
+
+
+                              onPressed: () {
+                                setState(() {
+                                  option = "Stripe Pay";
+                                  apiKey = stateItems[1].apiKey;
+                                  apiSignature = stateItems[1].apiSignature;
+                                });
+                                _payment();
+                              },
+                              child:Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                   Text("Pay With  "),Image.asset("assets/images/logo_visa.png",height: 20,)],) ,
+
+
+                            ),
+                          ),
+                        ),
+                        // RadioListTile(
+                        //   groupValue: option,
+                        //   title: Text("Credit & Debit Card",
+                        //       style: styles.ThemeText.editProfileText2),
+                        //   value: "Stripe Pay",
+                        //   onChanged: (val) {
+                        //
+                        //   },
+                        // ),
 
                         // NATIVE PAYMENT RADIO BUTTON
                         // RadioListTile(
@@ -1369,59 +1420,93 @@ createOrderNative(_orderid);
       ),
       ),
     ),
+                        SizedBox(height: 10,),
 
-                        Container(
-                          margin: EdgeInsets.only(bottom: 10,top: 20),
-                          width: pageWidth,
-                          height: 50,
-                          child: RaisedButton(
-                            color: Color(Constants.primaryYellow),
-                            shape: styles.ThemeText.borderRaidus1,
-                            onPressed: () {
-                              try {
-                                if (option != null) {
-                                  if (option == "Stripe Pay") {
-                                    stripePayInitOrder();
-                                  }
-                                  if (option == "Paypal") {
-                                    orderCreation();
-                                  }
-                                  // //TODO NATIVE PAYMENT
-                                  if (option == "Native Pay") {
-
-                                  }
-                                } else {
-                                  Fluttertoast.showToast(
-                                    msg: "Please choose any payment option",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    webBgColor: "#e74c3c",
-                                    timeInSecForIosWeb: 5,
-                                  );
-                                }
-                              } catch (e) {
-                                Loader.hide();
-                                Fluttertoast.showToast(
-                                  msg: e.toString(),
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  webBgColor: "#e74c3c",
-                                  timeInSecForIosWeb: 5,
-                                );
-                              }
-                            },
-                            child: Align(
-                              child: Text(
-                                'Pay now',
-                                style: styles.ThemeText.buttonTextStyles,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   margin: EdgeInsets.only(bottom: 10,top: 20),
+                        //   width: pageWidth,
+                        //   height: 50,
+                        //   child: RaisedButton(
+                        //     color: Color(Constants.primaryYellow),
+                        //     shape: styles.ThemeText.borderRaidus1,
+                        //     onPressed: () {
+                        //       try {
+                        //         if (option != null) {
+                        //           if (option == "Stripe Pay") {
+                        //             stripePayInitOrder();
+                        //           }
+                        //           if (option == "Paypal") {
+                        //             orderCreation();
+                        //           }
+                        //           // //TODO NATIVE PAYMENT
+                        //           if (option == "Native Pay") {
+                        //
+                        //           }
+                        //         } else {
+                        //           Fluttertoast.showToast(
+                        //             msg: "Please choose any payment option",
+                        //             toastLength: Toast.LENGTH_SHORT,
+                        //             webBgColor: "#e74c3c",
+                        //             timeInSecForIosWeb: 5,
+                        //           );
+                        //         }
+                        //       } catch (e) {
+                        //         Loader.hide();
+                        //         Fluttertoast.showToast(
+                        //           msg: e.toString(),
+                        //           toastLength: Toast.LENGTH_SHORT,
+                        //           webBgColor: "#e74c3c",
+                        //           timeInSecForIosWeb: 5,
+                        //         );
+                        //       }
+                        //     },
+                        //     child: Align(
+                        //       child: Text(
+                        //         'Pay now',
+                        //         style: styles.ThemeText.buttonTextStyles,
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
                 ),
               ));
+  }
+
+
+  _payment(){
+    try {
+      if (option != null) {
+        if (option == "Stripe Pay") {
+          stripePayInitOrder();
+        }
+        if (option == "Paypal") {
+          orderCreation();
+        }
+        // //TODO NATIVE PAYMENT
+        if (option == "Native Pay") {
+
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: "Please choose any payment option",
+          toastLength: Toast.LENGTH_SHORT,
+          webBgColor: "#e74c3c",
+          timeInSecForIosWeb: 5,
+        );
+      }
+    } catch (e) {
+      Loader.hide();
+      Fluttertoast.showToast(
+        msg: e.toString(),
+        toastLength: Toast.LENGTH_SHORT,
+        webBgColor: "#e74c3c",
+        timeInSecForIosWeb: 5,
+      );
+    }
   }
 
 }
