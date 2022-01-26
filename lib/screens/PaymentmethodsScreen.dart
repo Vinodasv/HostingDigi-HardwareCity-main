@@ -41,7 +41,7 @@ class PaymentmethodsScreen extends StatefulWidget {
 class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
   String option = '';
   final fieldText = TextEditingController();
-   var _paymentItems = [
+  var _paymentItems = [
     PaymentItem(
       label: 'Total',
       amount: '99.99',
@@ -195,8 +195,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     }
   }
 
-
-  String _orderid="";
+  String _orderid = "";
   //Order creation API
   orderCreation() async {
     var billIndex = billPhone.indexOf(" ");
@@ -360,18 +359,18 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         });
         return;
       }
-    }else if(option=="Native Pay"){
+    } else if (option == "Native Pay") {
       Loader.hide();
-      print(option + " : Native");
+      print(option + " : Native Pay");
       // Navigator.pushNamed(context, '/paypal', arguments: {
       //   'apiKey': apiKey,
       //   'secret': apiSignature,
       //   'total': grandTotal
       // }).then((value) async {
       //   var transactionId = value;
-        var orderId = response["orderid"];
+      var orderId = response["orderid"];
 
-      _orderid=response["orderid"];
+      _orderid = response["orderid"];
       //   if (nativepay_error) {
       //     final httpresponse = await http.post(Uri.parse(
       //         "https://hardwarecity.com.sg/cancelorder?orderid=${orderId}"));
@@ -450,8 +449,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     Navigator.pushNamed(context, '/bottomTab');
   }
 
-
-  createOrderNative(String orderid)async{
+  createOrderNative(String orderid) async {
     var orderId = orderid;
     if (nativepay_error) {
       final httpresponse = await http.post(Uri.parse(
@@ -465,8 +463,8 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         print("${failedresponse["messgage"]}");
       }
       //https://hardwarecity.com.sg/cancelorder?orderid=15505
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Payment Canceled.")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Payment Canceled.")));
       setState(() {
         //  onPayemntFailed = true;
       });
@@ -479,18 +477,17 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         webBgColor: "#e74c3c",
         timeInSecForIosWeb: 5,
       );
-    }
-    else {
+    } else {
       final response = http.post(Uri.parse(
           "https://www.hardwarecity.com.sg/successorder?orderid=${orderId}&transactionid="));
       print(response);
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("paid successfully")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("paid successfully")));
       Future.delayed(const Duration(seconds: 3), () {
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => MyOrdersScreen()),
-                (route) => false);
+            (route) => false);
         // payment done navigation goes here
         // Navigator.push(context,
         //     MaterialPageRoute(builder: (context) => const HomeScreen()));
@@ -840,36 +837,36 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     this.getPaymentMethods();
   }
 
-
-
-
   void onApplePayResult(paymentResult) {
-    nativepay_error=false;
+    nativepay_error = false;
     createOrderNative(_orderid);
 
     // Send the resulting Apple Pay token to your server / PSP
   }
+
   void onApplePayErrorResult(paymentResult) {
-    nativepay_error=true;
+    nativepay_error = true;
     createOrderNative(_orderid);
 
     // Send the resulting Apple Pay token to your server / PSP
   }
 
   void onGooglePayResult(paymentResult) {
-print("result"+paymentResult.toString());
-nativepay_error=false;
-createOrderNative(_orderid);
-
-    // Send the resulting Google Pay token to your server / PSP
-  }
-  void onGooglePayErrorResult(paymentResult) {
-    print("result"+paymentResult.toString());
-    nativepay_error=true;
+    print("result" + paymentResult.toString());
+    nativepay_error = false;
     createOrderNative(_orderid);
 
     // Send the resulting Google Pay token to your server / PSP
   }
+
+  void onGooglePayErrorResult(paymentResult) {
+    print("result" + paymentResult.toString());
+    nativepay_error = true;
+    createOrderNative(_orderid);
+
+    // Send the resulting Google Pay token to your server / PSP
+  }
+
   @override
   Widget build(BuildContext context) {
     String native = "Google Pay";
@@ -1287,34 +1284,80 @@ createOrderNative(_orderid);
                           "Choose a payment method : ",
                           style: styles.ThemeText.editProfileText,
                         ),
-                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         for (int i = 0; i < stateItems.length; i++)
                           if (i != 2 && i != 0)
-                            Center(
-                              child: SizedBox(
-                              width: 200,
-                              height: 50,
-                               child: RaisedButton(
-                              color: Colors.white,
-
-
-                              onPressed: () {
-                              setState(() {
-                               option = stateItems[i].name;
-                               apiKey = stateItems[i].apiKey;
-                               apiSignature = stateItems[i].apiSignature;
-                       });
-                              _payment();
-                              },
-                              child:Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                              Text("${stateItems[i].name} "),Image.asset("assets/images/logo_paypal.png",height: 20,)],) ,
-
-
-                          ),
-                        ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: SizedBox(
+                                    width: 140,
+                                    height: 50,
+                                    child: RaisedButton(
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        setState(() {
+                                          option = stateItems[i].name;
+                                          apiKey = stateItems[i].apiKey;
+                                          apiSignature =
+                                              stateItems[i].apiSignature;
+                                        });
+                                        _payment();
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text("Pay with "),
+                                          Image.asset(
+                                            "assets/images/paypal_image.png",
+                                            width: 50,
+                                            height: 20,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Center(
+                                  child: SizedBox(
+                                    width: 140,
+                                    height: 50,
+                                    child: RaisedButton(
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        setState(() {
+                                          option = "Stripe Pay";
+                                          apiKey = stateItems[1].apiKey;
+                                          apiSignature =
+                                              stateItems[1].apiSignature;
+                                        });
+                                        _payment();
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text("Pay with "),
+                                          Image.asset(
+                                            "assets/images/visacard_image.png",
+                                            height: 20,
+                                            width: 50,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
 
                         // RadioListTile(
@@ -1330,33 +1373,10 @@ createOrderNative(_orderid);
                         //     });
                         //   },
                         // ),
-                        SizedBox(height: 10,),
-
-                        Center(
-                          child: SizedBox(
-                            width: 200,
-                            height: 50,
-                            child: RaisedButton(
-                              color: Colors.white,
-
-
-                              onPressed: () {
-                                setState(() {
-                                  option = "Stripe Pay";
-                                  apiKey = stateItems[1].apiKey;
-                                  apiSignature = stateItems[1].apiSignature;
-                                });
-                                _payment();
-                              },
-                              child:Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                   Text("Pay With  "),Image.asset("assets/images/logo_visa.png",height: 20,)],) ,
-
-
-                            ),
-                          ),
+                        SizedBox(
+                          height: 5,
                         ),
+
                         // RadioListTile(
                         //   groupValue: option,
                         //   title: Text("Credit & Debit Card",
@@ -1381,46 +1401,52 @@ createOrderNative(_orderid);
                         //     });
                         //   },
                         // ),
-    Platform.isIOS ?
-    Center(
-      child: ApplePayButton(
-      paymentConfigurationAsset: 'json/apple_pay.json',
-      paymentItems: _paymentItems,
-      style: ApplePayButtonStyle.black,
-      type: ApplePayButtonType.buy,
-      margin: const EdgeInsets.only(top: 15.0),
-      onPaymentResult: onApplePayResult,
-      onError: onApplePayErrorResult,
-      onPressed: (){
-        option == "Native Pay";
-        orderCreation();
-      },
-      loadingIndicator: const Center(
-      child: CircularProgressIndicator(),
-      ),
-      ),
-    ):
-    Center(
-      child: GooglePayButton(
-      paymentConfigurationAsset: 'json/google_pay.json',
-      paymentItems: _paymentItems,
-      style: GooglePayButtonStyle.white,
-      type: GooglePayButtonType.pay,
-      width: 200,
-      height:50,
-      margin: const EdgeInsets.only(top: 15.0),
-      onPaymentResult: onGooglePayResult,
-      onError: onGooglePayErrorResult,
-      onPressed: (){
-        option == "Native Pay";
-        orderCreation();
-      },
-      loadingIndicator: const Center(
-      child: CircularProgressIndicator(),
-      ),
-      ),
-    ),
-                        SizedBox(height: 10,),
+                        Platform.isIOS
+                            ? Center(
+                                child: ApplePayButton(
+                                  paymentConfigurationAsset:
+                                      'json/apple_pay.json',
+                                  paymentItems: _paymentItems,
+                                  style: ApplePayButtonStyle.white,
+                                  type: ApplePayButtonType.buy,
+                                  width: 200,
+                                  height: 50,
+                                  margin: const EdgeInsets.only(top: 15.0),
+                                  onPaymentResult: onApplePayResult,
+                                  onError: onApplePayErrorResult,
+                                  onPressed: () {
+                                    option == "Native Pay";
+                                    orderCreation();
+                                  },
+                                  loadingIndicator: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              )
+                            : Center(
+                                child: GooglePayButton(
+                                  paymentConfigurationAsset:
+                                      'json/google_pay.json',
+                                  paymentItems: _paymentItems,
+                                  style: GooglePayButtonStyle.white,
+                                  type: GooglePayButtonType.pay,
+                                  width: 200,
+                                  height: 50,
+                                  margin: const EdgeInsets.only(top: 15.0),
+                                  onPaymentResult: onGooglePayResult,
+                                  onError: onGooglePayErrorResult,
+                                  onPressed: () {
+                                    option == "Native Pay";
+                                    orderCreation();
+                                  },
+                                  loadingIndicator: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
+                        SizedBox(
+                          height: 20,
+                        ),
 
                         // Container(
                         //   margin: EdgeInsets.only(bottom: 10,top: 20),
@@ -1476,8 +1502,7 @@ createOrderNative(_orderid);
               ));
   }
 
-
-  _payment(){
+  _payment() {
     try {
       if (option != null) {
         if (option == "Stripe Pay") {
@@ -1487,9 +1512,7 @@ createOrderNative(_orderid);
           orderCreation();
         }
         // //TODO NATIVE PAYMENT
-        if (option == "Native Pay") {
-
-        }
+        if (option == "Native Pay") {}
       } else {
         Fluttertoast.showToast(
           msg: "Please choose any payment option",
@@ -1508,7 +1531,6 @@ createOrderNative(_orderid);
       );
     }
   }
-
 }
 
 class Payment {
