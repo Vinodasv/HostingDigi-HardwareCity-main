@@ -478,8 +478,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 u["name"],
                 u["standardprice"],
                 u["gststandardprice"],
-                u["optionscount"].toString(),
                 u["price"].toString(),
+                u["optionscount"].toString()  ,
                 u["gstprice"].toString(),
                 u["weight"],
                 u["qty"],
@@ -1747,9 +1747,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       inCart: snapshot.data[index].inCart,
                                       imagePath: snapshot.data[index].imgPath,
                                       itemName: snapshot.data[index].itemName,
-                                      // optionscount:
-                                      //     snapshot.data[index].optionscount,
-                                      optionscount: "0",
+                                      optionscount:
+                                          snapshot.data[index].optionscount,
+                                      // optionscount: "0",
                                       // snapshot.data[index]
                                       //                 .optionscount ==
                                       //             0 ||

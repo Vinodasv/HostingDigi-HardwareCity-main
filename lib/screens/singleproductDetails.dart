@@ -93,6 +93,7 @@ class _SingleProductDetailsScreenState
       if (value == u.name) {
         setState(() {
           price = (double.parse(baseprice) + double.parse(u.price)).toString();
+          gstprice=u.gstprice.toString();
           weight = u.weight.toString();
           optionId = u.optionId;
           option = u.name;
@@ -383,7 +384,8 @@ class _SingleProductDetailsScreenState
                 u["weight"] == null
                     ? temp["weight"].toString()
                     : u["weight"].toString(),
-                u);
+                u,
+                u['gstprice'].toString());
             print("options");
             tempDataList.add(dt);
             tempList.add(u["name"].toString());
@@ -2188,6 +2190,8 @@ class OptionDataType {
   final int optionId;
   final String name;
   final String price;
+  final String gstprice;
+
   final String qty;
   final String custqtyperday;
   final String shippingbox;
@@ -2195,7 +2199,7 @@ class OptionDataType {
   final Object Obj;
 
   OptionDataType(this.optionId, this.name, this.price, this.qty,
-      this.custqtyperday, this.shippingbox, this.weight, this.Obj);
+      this.custqtyperday, this.shippingbox, this.weight, this.Obj,this.gstprice);
 }
 
 class AllItemsDataType {
