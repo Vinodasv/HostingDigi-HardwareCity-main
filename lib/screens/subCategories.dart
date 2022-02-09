@@ -195,9 +195,9 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           u["name"],
           u["standardprice"],
           u["gststandardprice"],
+          u["gstprice"].toString(),
           u["optionscount"].toString(),
           u["price"].toString(),
-          u["gstprice"].toString(),
           u["weight"],
           u["qty"],
           u["cust_qty"],
@@ -1101,7 +1101,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                                             optionscount: snapshot.data[index]
                                                         .optionscount ==
                                                     null
-                                                ? 0
+                                                ? "0"
                                                 : snapshot
                                                     .data[index].optionscount,
                                             gstprice: snapshot.data[index].price
