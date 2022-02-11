@@ -368,7 +368,7 @@ class _LoginFormState extends State<LoginForm> {
                     )),
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 0,
+                    height: 50,
                     margin: styles.ThemeText.topMargin,
                     child: RaisedButton(
                       color: Colors.white,

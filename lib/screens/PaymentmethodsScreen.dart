@@ -359,7 +359,8 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         });
         return;
       }
-    } else if (option == "Native Pay") {
+    }
+    else if (option == "Native Pay") {
       Loader.hide();
       print(option + " : Native Pay");
       // Navigator.pushNamed(context, '/paypal', arguments: {
@@ -444,9 +445,9 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
         webBgColor: "#e74c3c",
         timeInSecForIosWeb: 5,
       );
+      Navigator.pushNamed(context, '/bottomTab');
     }
     Loader.hide();
-    Navigator.pushNamed(context, '/bottomTab');
   }
 
   createOrderNative(String orderid) async {
@@ -1415,7 +1416,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                   onPaymentResult: onApplePayResult,
                                   onError: onApplePayErrorResult,
                                   onPressed: () {
-                                    option == "Native Pay";
+                                    option = "Native Pay";
                                     orderCreation();
                                   },
                                   loadingIndicator: const Center(
@@ -1436,7 +1437,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                   onPaymentResult: onGooglePayResult,
                                   onError: onGooglePayErrorResult,
                                   onPressed: () {
-                                    option == "Native Pay";
+                                    option = "Native Pay";
                                     orderCreation();
                                   },
                                   loadingIndicator: const Center(
@@ -1512,7 +1513,9 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
           orderCreation();
         }
         // //TODO NATIVE PAYMENT
-        if (option == "Native Pay") {}
+        if (option == "Native Pay") {
+
+        }
       } else {
         Fluttertoast.showToast(
           msg: "Please choose any payment option",

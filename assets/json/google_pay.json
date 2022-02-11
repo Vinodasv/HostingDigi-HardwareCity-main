@@ -12,7 +12,7 @@
           "parameters": {
             "gateway": "stripe",
             "stripe:version": "2020-08-27",
-            "stripe:publishableKey": "<stripe publishable key, eg pk_.......>"
+            "stripe:publishableKey": "pk_live_51HtTNND7fZJmBBvnXgAZiJZQpHh8IvgMveQLutC8QMUDkq2oWM7jchwI8mq9euHpNS8Pxy84mmXNQnpVDlfKX89a003RSLFVW0"
           }
         },
         "parameters": {
@@ -29,7 +29,7 @@
       }
     ],
     "merchantInfo": {
-      "merchantId": "lesliekunarto@hardwarecity.com.sg",
+      "merchantId": "cicLht82827460808305",
       "merchantName": "HardwareCity"
     },
     "transactionInfo": {
