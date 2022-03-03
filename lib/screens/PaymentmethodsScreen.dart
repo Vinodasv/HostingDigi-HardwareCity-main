@@ -362,7 +362,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
     }
     else if (option == "Native Pay") {
       Loader.hide();
-      print(option + " : Native Pay");
+      print(option + " : Native");
       // Navigator.pushNamed(context, '/paypal', arguments: {
       //   'apiKey': apiKey,
       //   'secret': apiSignature,
@@ -1291,74 +1291,32 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
 
                         for (int i = 0; i < stateItems.length; i++)
                           if (i != 2 && i != 0)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: SizedBox(
-                                    width: 140,
-                                    height: 50,
-                                    child: RaisedButton(
-                                      color: Colors.white,
-                                      onPressed: () {
-                                        setState(() {
-                                          option = stateItems[i].name;
-                                          apiKey = stateItems[i].apiKey;
-                                          apiSignature =
-                                              stateItems[i].apiSignature;
-                                        });
-                                        _payment();
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text("Pay with "),
-                                          Image.asset(
-                                            "assets/images/paypal_image.png",
-                                            width: 50,
-                                            height: 20,
-                                          )
-                                        ],
-                                      ),
-                                    ),
+                            Center(
+                              child: SizedBox(
+                                width: 240,
+                                height: 50,
+                                child: RaisedButton(
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    setState(() {
+                                      option = stateItems[i].name;
+                                      apiKey = stateItems[i].apiKey;
+                                      apiSignature = stateItems[i].apiSignature;
+                                    });
+                                    _payment();
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("Pay with "),
+                                      Image.asset(
+                                        "assets/images/paypal_image.png",
+                                        height: 20,
+                                      )
+                                    ],
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: 140,
-                                    height: 50,
-                                    child: RaisedButton(
-                                      color: Colors.white,
-                                      onPressed: () {
-                                        setState(() {
-                                          option = "Stripe Pay";
-                                          apiKey = stateItems[1].apiKey;
-                                          apiSignature =
-                                              stateItems[1].apiSignature;
-                                        });
-                                        _payment();
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text("Pay with "),
-                                          Image.asset(
-                                            "assets/images/visacard_image.png",
-                                            height: 20,
-                                            width: 50,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
 
                         // RadioListTile(
@@ -1375,9 +1333,36 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                         //   },
                         // ),
                         SizedBox(
-                          height: 5,
+                          height: 10,
                         ),
 
+                        Center(
+                          child: SizedBox(
+                            width: 240,
+                            height: 50,
+                            child: RaisedButton(
+                              color: Colors.white,
+                              onPressed: () {
+                                setState(() {
+                                  option = "Stripe Pay";
+                                  apiKey = stateItems[1].apiKey;
+                                  apiSignature = stateItems[1].apiSignature;
+                                });
+                                _payment();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Pay with  "),
+                                  Image.asset(
+                                    "assets/images/visacard_image.png",
+                                    height: 20,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         // RadioListTile(
                         //   groupValue: option,
                         //   title: Text("Credit & Debit Card",
@@ -1410,7 +1395,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                   paymentItems: _paymentItems,
                                   style: ApplePayButtonStyle.white,
                                   type: ApplePayButtonType.buy,
-                                  width: 200,
+                                  width: 240,
                                   height: 50,
                                   margin: const EdgeInsets.only(top: 15.0),
                                   onPaymentResult: onApplePayResult,
@@ -1431,7 +1416,7 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                                   paymentItems: _paymentItems,
                                   style: GooglePayButtonStyle.white,
                                   type: GooglePayButtonType.pay,
-                                  width: 200,
+                                  width: 240,
                                   height: 50,
                                   margin: const EdgeInsets.only(top: 15.0),
                                   onPaymentResult: onGooglePayResult,
@@ -1448,7 +1433,6 @@ class _PaymentmethodsScreenState extends State<PaymentmethodsScreen> {
                         SizedBox(
                           height: 20,
                         ),
-
                         // Container(
                         //   margin: EdgeInsets.only(bottom: 10,top: 20),
                         //   width: pageWidth,

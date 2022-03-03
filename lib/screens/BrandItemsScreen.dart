@@ -629,7 +629,7 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                 u["standardprice"],
                 u["gststandardprice"],
                 u["price"].toString(),
-                u["optionscount"].toString()  ,
+                u["optionscount"].toString(),
                 u["gstprice"].toString(),
                 u["weight"],
                 u["qty"],
@@ -898,8 +898,9 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                                         gststandardprice: snapshot
                                             .data[index].gststandardprice
                                             .toString(),
-                                        optionscount:
-                                            snapshot.data[index].optionscount.toString(),
+                                        optionscount: snapshot
+                                            .data[index].optionscount
+                                            .toString(),
                                         increament: () {
                                           if (snapshot.data[index].count !=
                                               snapshot.data[index].custQty) {
